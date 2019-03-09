@@ -8,6 +8,7 @@ typedef unsigned int uint;
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
+#include <random>
 #include "mersennetwister.h"
 
 using namespace std;
@@ -60,7 +61,28 @@ public:
             for(size_t k =0; k<nbrofchars; ++k)
                 hashvalues[k] = static_cast<hashvaluetype>(randomgeneratorbase())
                                 | (static_cast<hashvaluetype>(randomgenerator()) << 32);
-        } else throw runtime_error("unsupported hash value type");
+        } else if (sizeof(hashvaluetype) == 16) {
+            std::mt19937_64 randomgenerator(maxval>>32);
+            std::mt19937_64 randomgeneratorbase((maxval>>32) ==0 ? maxval : 0xFFFFFFFFU);
+            hashvaluetype tmaxval = maxval - 1;
+            tmaxval |= tmaxval >> 1;
+            tmaxval |= tmaxval >> 2;
+            tmaxval |= tmaxval >> 4;
+            tmaxval |= tmaxval >> 8;
+            tmaxval |= tmaxval >> 16;
+            tmaxval |= tmaxval >> 32;
+            tmaxval |= tmaxval >> 64;
+            for(size_t k =0; k<nbrofchars; ++k) {
+                hashvaluetype val;
+                do {
+                    val = static_cast<hashvaluetype>(randomgeneratorbase()) |
+                         (static_cast<hashvaluetype>(randomgenerator()) << 64);
+                    val &= tmaxval;
+                } while(val > maxval);
+                hashvalues[k] = val;
+            }
+        } else
+            throw runtime_error("unsupported hash value type");
     }
 
     CharacterHash(hashvaluetype maxval, uint32 seed1, uint32 seed2) {
@@ -74,9 +96,30 @@ public:
             mersenneRNG randomgeneratorbase((maxval>>32) ==0 ? maxval : 0xFFFFFFFFU);
             randomgenerator.seed(seed1);
             randomgeneratorbase.seed(seed2);
-            for(size_t k =0; k<nbrofchars; ++k)
+            for(size_t k =0; k<nbrofchars; ++k) {
                 hashvalues[k] = static_cast<hashvaluetype>(randomgeneratorbase())
                                 | (static_cast<hashvaluetype>(randomgenerator()) << 32);
+            }
+        } else if (sizeof(hashvaluetype) == 16) {
+            std::mt19937_64 randomgenerator(seed1);
+            std::mt19937_64 randomgeneratorbase(seed2);
+            hashvaluetype tmaxval = maxval;
+            tmaxval |= tmaxval >> 1;
+            tmaxval |= tmaxval >> 2;
+            tmaxval |= tmaxval >> 4;
+            tmaxval |= tmaxval >> 8;
+            tmaxval |= tmaxval >> 16;
+            tmaxval |= tmaxval >> 32;
+            tmaxval |= tmaxval >> 64;
+            for(size_t k =0; k<nbrofchars; ++k) {
+                hashvaluetype val;
+                do {
+                    val = static_cast<hashvaluetype>(randomgeneratorbase()) |
+                         (static_cast<hashvaluetype>(randomgenerator()) << 64);
+                    val &= tmaxval;
+                } while(val > maxval);
+                hashvalues[k] = val;
+            }
         } else throw runtime_error("unsupported hash value type");
     }
 
