@@ -53,7 +53,6 @@ public:
         }
     }
     void seed(uint64_t s1, uint64_t s2) {
-        std::fprintf(stderr, "Seeding with %zu and %zu\n", size_t(s1), size_t(s2));
         hasher.seed(maskfnc<hashvaluetype>(wordsize), s1, s2);
     }
 

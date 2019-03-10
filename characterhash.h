@@ -42,7 +42,7 @@ constexpr
 #endif
 hashvaluetype maskfnc(int bits) {
     assert(bits>0);
-    assert(bits<=sizeof(hashvaluetype)*8);
+    assert(unsigned(bits)<=sizeof(hashvaluetype)*8);
     hashvaluetype x = static_cast<hashvaluetype>(1) << (bits - 1);
     return x ^ (x - 1);
 }
@@ -55,11 +55,9 @@ public:
         seed(maxval, seed1, seed2);
     }
     void seed(hashvaluetype maxval, uint32_t seed1, uint64_t seed2) {
-        std::fprintf(stderr, "seeding characterhash with seeds %u and %u\n", seed1, seed2);
         if(sizeof(hashvaluetype) <=4) {
             mersenneRNG randomgenerator(maxval);
             randomgenerator.seed(seed1);
-            std::fprintf(stderr, "val for 4-byte hash: %zu\n", size_t(maxval));
             for(size_t k =0; k<nbrofchars; ++k)
                 hashvalues[k] = static_cast<hashvaluetype>(randomgenerator());
         } else if (sizeof(hashvaluetype) == 8) {
@@ -67,7 +65,6 @@ public:
             mersenneRNG randomgeneratorbase((maxval>>32) ==0 ? maxval : 0xFFFFFFFFU);
             randomgenerator.seed(seed1);
             randomgeneratorbase.seed(seed2);
-            std::fprintf(stderr, "val for 8-byte hash: %zu\n", size_t(maxval));
             for(size_t k =0; k<nbrofchars; ++k) {
                 hashvalues[k] = static_cast<hashvaluetype>(randomgeneratorbase())
                                 | (static_cast<hashvaluetype>(randomgenerator()) << 32);
@@ -76,7 +73,6 @@ public:
             std::mt19937_64 randomgenerator(seed1);
             std::mt19937_64 randomgeneratorbase(seed2);
             hashvaluetype tmaxval = maxval;
-            std::fprintf(stderr, "maxval: %zu/%zu\n", size_t(maxval >> 64), size_t(maxval));
             tmaxval |= tmaxval >> 1;
             tmaxval |= tmaxval >> 2;
             tmaxval |= tmaxval >> 4;
@@ -92,7 +88,6 @@ public:
                     val &= tmaxval;
                 } while(val > maxval);
                 hashvalues[k] = val;
-                std::fprintf(stderr, "val for 16-byte hash: %zu/%zu\n", size_t(hashvalues[k]>>64), size_t(hashvalues[k]));
             }
         } else throw runtime_error("unsupported hash value type");
     }
