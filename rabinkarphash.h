@@ -109,7 +109,7 @@ public:
       hashvalue = 0;
     }
     void seed(uint64_t s1, uint64_t s2) {
-        hasher.seed(s1, s2);
+        hasher.seed(maskfnc<hashvaluetype>(wordsize), s1, s2);
     }
     static constexpr bool is_full_word() {
         return wordsize == (CHAR_BIT * sizeof(hashvaluetype));
