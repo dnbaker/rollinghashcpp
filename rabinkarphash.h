@@ -3,6 +3,7 @@
 
 
 #include "characterhash.h"
+#include <climits>
 #include <cstring>
 
 
