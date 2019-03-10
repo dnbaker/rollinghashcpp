@@ -9,32 +9,9 @@ typedef unsigned int uint;
 #include <iostream>
 #include <stdexcept>
 #include <random>
-#include "mersennetwister.h"
-
-using namespace std;
-
-
-
-
-class mersenneRNG {
-public:
-    mersenneRNG(uint32 maxval) : mtr(),n(maxval) {};
-    uint32 operator()() {
-        return mtr.randInt(n);
-    }
-    void seed(uint32 seedval) {
-        mtr.seed(seedval);
-    }
-    void seed() {
-        mtr.seed();
-    }
-    uint32 rand_max() {
-        return n;
-    }
-private:
-    MTRand mtr;
-    int n;
-};
+using std::cerr;
+using std::runtime_error;
+using std::endl;
 
 template <typename hashvaluetype>
 #if __cplusplus >= 201402L
@@ -56,18 +33,34 @@ public:
     }
     void seed(hashvaluetype maxval, uint32_t seed1, uint64_t seed2) {
         if(sizeof(hashvaluetype) <=4) {
-            mersenneRNG randomgenerator(maxval);
+            std::mt19937_64 randomgenerator(seed1);
             randomgenerator.seed(seed1);
-            for(size_t k =0; k<nbrofchars; ++k)
-                hashvalues[k] = static_cast<hashvaluetype>(randomgenerator());
-        } else if (sizeof(hashvaluetype) == 8) {
-            mersenneRNG randomgenerator(maxval>>32);
-            mersenneRNG randomgeneratorbase((maxval>>32) ==0 ? maxval : 0xFFFFFFFFU);
-            randomgenerator.seed(seed1);
-            randomgeneratorbase.seed(seed2);
+            hashvaluetype tmaxval = maxval;
+            tmaxval |= tmaxval >> 1;
+            tmaxval |= tmaxval >> 2;
+            tmaxval |= tmaxval >> 4;
+            tmaxval |= tmaxval >> 8;
+            tmaxval |= tmaxval >> 16;
+            --tmaxval;
             for(size_t k =0; k<nbrofchars; ++k) {
-                hashvalues[k] = static_cast<hashvaluetype>(randomgeneratorbase())
-                                | (static_cast<hashvaluetype>(randomgenerator()) << 32);
+                hashvaluetype next;
+                do { next = randomgenerator() & tmaxval ;} while(next > maxval);
+                hashvalues[k] = next;
+            }
+        } else if (sizeof(hashvaluetype) == 8) {
+            std::mt19937_64 randomgenerator(seed1);
+            hashvaluetype tmaxval = maxval;
+            tmaxval |= tmaxval >> 1;
+            tmaxval |= tmaxval >> 2;
+            tmaxval |= tmaxval >> 4;
+            tmaxval |= tmaxval >> 8;
+            tmaxval |= tmaxval >> 16;
+            tmaxval |= tmaxval >> 32;
+            --tmaxval;
+            for(size_t k =0; k<nbrofchars; ++k) {
+                hashvaluetype next;
+                do { next = randomgenerator() & tmaxval;} while(next > maxval);
+                hashvalues[k] = next;
             }
         } else if (sizeof(hashvaluetype) == 16) {
             std::mt19937_64 randomgenerator(seed1);
@@ -80,6 +73,7 @@ public:
             tmaxval |= tmaxval >> 16;
             tmaxval |= tmaxval >> 32;
             tmaxval |= tmaxval >> 64;
+            --tmaxval;
             for(size_t k =0; k<nbrofchars; ++k) {
                 hashvaluetype val;
                 do {
