@@ -31,8 +31,8 @@ public:
 
     // myn is the length of the sequences, e.g., 3 means that you want to hash sequences of 3 characters
     // mywordsize is the number of bits you which to receive as hash values, e.g., 19 means that the hash values are 19-bit integers
-    ThreeWiseHash(int myn, int mywordsize=19) : n(myn), wordsize(mywordsize),
-        hashers(),hasher(0) {
+    ThreeWiseHash(int myn, int mywordsize=19) : n(myn), wordsize(mywordsize), hasher(UINT32_C(-1), wordsize)
+        /*, hashers() ,hasher(myn)*/ {
         if(static_cast<uint>(wordsize) > 8*sizeof(hashvaluetype)) {
             cerr<<"Can't create "<<wordsize<<"-bit hash values"<<endl;
             throw "abord";
