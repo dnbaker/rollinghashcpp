@@ -6,7 +6,6 @@
 
 #include "characterhash.h"
 using std::vector;
-using std::deque;
 
 enum {NOPRECOMP,FULLPRECOMP};
 
