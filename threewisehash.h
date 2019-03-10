@@ -50,6 +50,11 @@ public:
         ngram.push_back(inchar);
         __updateHashValue();
     }
+    void seed(uint64_t seed) {
+        std::mt19937_64 seedgen(seed);
+        for(auto &h: hashers)
+            h.seed(maskfnc<hashvaluetype>(wordsize), seedgen(), seedgen());
+    }
 
     // add inchar as an input and remove outchar, the hashvalue is updated
     // this function can be used to update the hash value from the hash value of [outchar]ABC to the hash value of ABC[inchar]
