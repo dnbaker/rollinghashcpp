@@ -1,5 +1,6 @@
 #include <map>
 #include <deque>
+#include "mersennetwister.h"
 
 #include "cyclichash.h"
 #include "rabinkarphash.h"
@@ -9,6 +10,26 @@
 #include "threewisehash.h"
 
 using namespace std;
+
+class mersenneRNG {
+public:
+    mersenneRNG(uint32 maxval) : mtr(),n(maxval) {};
+    uint32 operator()() {
+        return mtr.randInt(n);
+    }
+    void seed(uint32 seedval) {
+        mtr.seed(seedval);
+    }
+    void seed() {
+        mtr.seed();
+    }
+    uint32 rand_max() {
+        return n;
+    }
+private:
+    MTRand mtr;
+    int n;
+};
 
 template<class hashfunction>
 bool testExtendAndPrepend(uint L = 19) {

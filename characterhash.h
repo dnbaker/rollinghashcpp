@@ -28,7 +28,8 @@ template <typename hashvaluetype = uint32, typename chartype =  unsigned char>
 class CharacterHash {
 public:
 
-    CharacterHash(hashvaluetype maxval, uint32 seed1=0x1337, uint32 seed2=0x137) {
+    CharacterHash(hashvaluetype maxval, uint32 seed1=0, uint32 seed2=0x1337) {
+        if(seed1 == 0) seed1 = std::rand();
         seed(maxval, seed1, seed2);
     }
     void seed(hashvaluetype maxval, uint32_t seed1, uint64_t seed2) {
