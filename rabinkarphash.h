@@ -46,7 +46,7 @@ public:
       hashvalue = 0;
     }
     void seed(uint64_t s1, uint64_t s2) {
-        hasher.seed(wordsize, s1, s2);
+        hasher.seed(maskfnc<hashvaluetype>(wordsize), s1, s2);
     }
 
     // this is a convenience function, use eat,update and .hashvalue to use as a rolling hash function
