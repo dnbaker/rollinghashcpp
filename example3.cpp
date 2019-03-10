@@ -6,6 +6,7 @@
 
 #include "cyclichash.h"
 
+using namespace std;
 // given hash value of "BCD", can I have value of
 // "ABC"quicky?
 

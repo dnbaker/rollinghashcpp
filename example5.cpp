@@ -56,6 +56,7 @@ forward and reverse hashes.
 #define SEED2 1985
 #define HASHBITS 64
 
+using namespace std;
 
 // full string hash from scratch (for comparison)
 uint64_t fullhash(const string & input) {

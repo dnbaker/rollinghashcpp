@@ -7,6 +7,7 @@
 // "ABCDE", without computing the whole hash value?
 
 #include "cyclichash.h"
+using namespace std;
 
 
 int main(int argc, char * argv[])

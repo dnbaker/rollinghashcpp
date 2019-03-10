@@ -6,6 +6,7 @@
 // Example of 64-bit hashing
 
 #include "cyclichash.h"
+using namespace std;
 
 
 int main(int argc, char * argv[])

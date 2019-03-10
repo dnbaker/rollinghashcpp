@@ -13,6 +13,7 @@
 #include "threewisehash.h"
 #include "rabinkarphash.h"
 #include "adler32.h"
+using namespace std;
 
 void CalcHashes( const std::string& Inp, const int WindowSize, KarpRabinHash<> & h1, ThreeWiseHash<> & h2, GeneralHash<> & h3, CyclicHash<> & h4, Adler32& h5 ) {
 

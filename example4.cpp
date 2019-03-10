@@ -9,6 +9,7 @@
 * Test of the prepend and append functions to test slightly longer and slightly shorter n-grams.
 */
 
+using namespace std;
 int main(int argc, char * argv[])
 {
     CyclicHash<uint64_t>  hf(4, 64);
