@@ -52,6 +52,9 @@ public:
             throw "abord";
         }
     }
+    void seed(uint64_t s1, uint64_t s2) {
+        hasher.seed(wordsize, s1, s2);
+    }
 
     void fastleftshiftn(hashvaluetype & x) const {
         x =  ((x & maskn) << myr ) | (x >> (wordsize-myr)) ;

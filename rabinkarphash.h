@@ -45,6 +45,9 @@ public:
     void reset() {
       hashvalue = 0;
     }
+    void seed(uint64_t s1, uint64_t s2) {
+        hasher.seed(wordsize, s1, s2);
+    }
 
     // this is a convenience function, use eat,update and .hashvalue to use as a rolling hash function
     template<class container>
@@ -91,18 +94,22 @@ class KarpRabinHashBits {
 public:
     // myn is the length of the sequences, e.g., 3 means that you want to hash sequences of 3 characters
     // mywordsize is the number of bits you which to receive as hash values, e.g., 19 means that the hash values are 19-bit integers
-    KarpRabinHashBits(int myn):  hashvalue(0), n(myn),
+    KarpRabinHashBits(int myn, int mywordsize=wordsize):  hashvalue(0), n(myn),
         hasher( maskfnc<hashvaluetype>(wordsize)),
         HASHMASK(maskfnc<hashvaluetype>(wordsize)),BtoN(1) {
+        if(mywordsize != wordsize) throw std::runtime_error("wordsize cannot be set for this class.");
         for (int i=0; i < n ; ++i) {
             BtoN *= B;
-            if(!is_full_word()) BtoN &= HASHMASK;
+            mask_value(BtoN);
         }
     }
 
     // prepare to process a new string, you will need to call "eat" again
     void reset() {
       hashvalue = 0;
+    }
+    void seed(uint64_t s1, uint64_t s2) {
+        hasher.seed(s1, s2);
     }
     static constexpr bool is_full_word() {
         return wordsize == (CHAR_BIT * sizeof(hashvaluetype));

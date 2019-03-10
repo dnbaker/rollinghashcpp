@@ -86,6 +86,9 @@ public:
     }
 
     CharacterHash(hashvaluetype maxval, uint32 seed1, uint32 seed2) {
+        seed(maxval, seed1, seed2);
+    }
+    void seed(hashvaluetype maxval, uint32_t seed1, uint64_t seed2) {
         if(sizeof(hashvaluetype) <=4) {
             mersenneRNG randomgenerator(maxval);
             randomgenerator.seed(seed1);
