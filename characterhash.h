@@ -65,8 +65,8 @@ template<> inline int64_t roundup(int64_t v) {return roundup(uint64_t(v));}
 template<> inline __int128_t roundup(__int128_t v) {return roundup(__uint128_t(v));}
 
 template<typename T>
-void hack(T &x, std::mt19937_64 &rng) {x = rng();}
-template<> void hack(__uint128_t &x, std::mt19937_64 &rng) {
+inline void hack(T &x, std::mt19937_64 &rng) {x = rng();}
+template<> inline void hack(__uint128_t &x, std::mt19937_64 &rng) {
     x = rng(); x <<= 64; x |= rng();
 }
 
